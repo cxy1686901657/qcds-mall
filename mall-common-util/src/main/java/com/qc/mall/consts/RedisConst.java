@@ -8,15 +8,22 @@ package com.qc.mall.consts;
  */
 public interface RedisConst {
 
-    interface INFO{
-        String prefix="sku:";
-        String sufix=":info";
-    }
-    interface TOKEN{
-        String prefix="user:";
-        String sufix=":token";
+    interface INFO {
+        String prefix = "sku:";
+        String sufix = ":info";
     }
 
-    String prefix="sku:";
-    String sufix=":info";
+    interface TOKEN {
+        String prefix = "user:";
+        String sufix = ":token";
+    }
+
+    interface SKU_LOCK {
+        String prefix = "sku:";
+        String sufix = ":lock";
+    }
+
+
+    String prefix = "sku:";
+    String sufix = ":info";
 }
