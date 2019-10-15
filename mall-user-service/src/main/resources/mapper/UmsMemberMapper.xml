@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.user.mapper.UmsMemberMapper" >
+  <resultMap id="BaseResultMap" type="com.qc.mall.bean.UmsMember" >
+    <id column="id" property="id" jdbcType="VARCHAR"  />
+    <result column="member_level_id" property="memberLevelId" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="icon" property="icon" jdbcType="VARCHAR" />
+    <result column="gender" property="gender" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="job" property="job" jdbcType="VARCHAR" />
+    <result column="personalized_signature" property="personalizedSignature" jdbcType="VARCHAR" />
+    <result column="source_type" property="sourceType" jdbcType="INTEGER" />
+    <result column="integration" property="integration" jdbcType="INTEGER" />
+    <result column="growth" property="growth" jdbcType="INTEGER" />
+    <result column="luckey_count" property="luckeyCount" jdbcType="INTEGER" />
+    <result column="history_integration" property="historyIntegration" jdbcType="INTEGER" />
+    <result column="access_token" property="accessToken" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, member_level_id, username, password, nickname, phone, status, create_time, icon, 
+    gender, birthday, city, job, personalized_signature, source_type, integration, growth, 
+    luckey_count, history_integration,access_token,access_code,source_uid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from ums_member
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from ums_member
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.qc.mall.bean.UmsMember" >
+    insert into ums_member (id, member_level_id, username, 
+      password, nickname, phone, 
+      status, create_time, icon, 
+      gender, birthday, city, 
+      job, personalized_signature, source_type, 
+      integration, growth, luckey_count, 
+      history_integration,access_token,access_code,source_uid)
+    values (#{id,jdbcType=VARCHAR}, #{memberLevelId,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{icon,jdbcType=VARCHAR}, 
+      #{gender,jdbcType=INTEGER}, #{birthday,jdbcType=DATE}, #{city,jdbcType=VARCHAR}, 
+      #{job,jdbcType=VARCHAR}, #{personalizedSignature,jdbcType=VARCHAR}, #{sourceType,jdbcType=INTEGER}, 
+      #{integration,jdbcType=INTEGER}, #{growth,jdbcType=INTEGER}, #{luckeyCount,jdbcType=INTEGER}, 
+      #{historyIntegration,jdbcType=INTEGER}, #{accessToken,jdbcType=VARCHAR},#{accessCode},#{sourceUid})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qc.mall.bean.UmsMember" >
+    insert into ums_member
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="memberLevelId != null" >
+        member_level_id,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="icon != null" >
+        icon,
+      </if>
+      <if test="gender != null" >
+        gender,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="job != null" >
+        job,
+      </if>
+      <if test="personalizedSignature != null" >
+        personalized_signature,
+      </if>
+      <if test="sourceType != null" >
+        source_type,
+      </if>
+      <if test="integration != null" >
+        integration,
+      </if>
+      <if test="growth != null" >
+        growth,
+      </if>
+      <if test="luckeyCount != null" >
+        luckey_count,
+      </if>
+      <if test="historyIntegration != null" >
+        history_integration,
+      </if>
+      <if test="accessToken != null" >
+        access_token,
+      </if>
+      <if test="accessCode != null" >
+        access_code,
+      </if>
+      <if test="sourceUid != null" >
+        source_uid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="memberLevelId != null" >
+        #{memberLevelId,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icon != null" >
+        #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="personalizedSignature != null" >
+        #{personalizedSignature,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="integration != null" >
+        #{integration,jdbcType=INTEGER},
+      </if>
+      <if test="growth != null" >
+        #{growth,jdbcType=INTEGER},
+      </if>
+      <if test="luckeyCount != null" >
+        #{luckeyCount,jdbcType=INTEGER},
+      </if>
+      <if test="historyIntegration != null" >
+        #{historyIntegration,jdbcType=INTEGER},
+      </if>
+      <if test="accessToken != null" >
+        #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="accessCode != null" >
+        #{accessCode,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceUid != null" >
+        #{sourceUid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.UmsMember" >
+    update ums_member
+    <set >
+      <if test="memberLevelId != null" >
+        member_level_id = #{memberLevelId,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="personalizedSignature != null" >
+        personalized_signature = #{personalizedSignature,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="integration != null" >
+        integration = #{integration,jdbcType=INTEGER},
+      </if>
+      <if test="growth != null" >
+        growth = #{growth,jdbcType=INTEGER},
+      </if>
+      <if test="luckeyCount != null" >
+        luckey_count = #{luckeyCount,jdbcType=INTEGER},
+      </if>
+      <if test="historyIntegration != null" >
+        history_integration = #{historyIntegration,jdbcType=INTEGER},
+      </if>
+      <if test="accessToken != null" >
+        access_token = #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="accessCode != null" >
+        access_code=#{accessCode},
+      </if>
+      <if test="sourceUid != null" >
+        source_uid=#{sourceUid},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.UmsMember" >
+    update ums_member
+    set member_level_id = #{memberLevelId,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      icon = #{icon,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=INTEGER},
+      birthday = #{birthday,jdbcType=DATE},
+      city = #{city,jdbcType=VARCHAR},
+      job = #{job,jdbcType=VARCHAR},
+      personalized_signature = #{personalizedSignature,jdbcType=VARCHAR},
+      source_type = #{sourceType,jdbcType=INTEGER},
+      integration = #{integration,jdbcType=INTEGER},
+      growth = #{growth,jdbcType=INTEGER},
+      luckey_count = #{luckeyCount,jdbcType=INTEGER},
+      history_integration = #{historyIntegration,jdbcType=INTEGER},
+      access_token = #{accessToken,jdbcType=VARCHAR},
+      access_code= #{accessCode,jdbcType=VARCHAR},
+      source_uid= #{sourceUid,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="getAllUmsMember" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_member
+  </select>
+  <select id="select" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_member
+    where
+    username = #{username}
+    AND
+    password = #{password}
+  </select>
+  <select id="selectByUid" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_member
+    where
+    source_uid=#{sourceUid}
+  </select>
+  <update id="updateBySourceUid" parameterType="com.qc.mall.bean.UmsMember" >
+    update ums_member
+    <set >
+      <if test="memberLevelId != null" >
+        member_level_id = #{memberLevelId,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="icon != null" >
+        icon = #{icon,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null" >
+        gender = #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="job != null" >
+        job = #{job,jdbcType=VARCHAR},
+      </if>
+      <if test="personalizedSignature != null" >
+        personalized_signature = #{personalizedSignature,jdbcType=VARCHAR},
+      </if>
+      <if test="sourceType != null" >
+        source_type = #{sourceType,jdbcType=INTEGER},
+      </if>
+      <if test="integration != null" >
+        integration = #{integration,jdbcType=INTEGER},
+      </if>
+      <if test="growth != null" >
+        growth = #{growth,jdbcType=INTEGER},
+      </if>
+      <if test="luckeyCount != null" >
+        luckey_count = #{luckeyCount,jdbcType=INTEGER},
+      </if>
+      <if test="historyIntegration != null" >
+        history_integration = #{historyIntegration,jdbcType=INTEGER},
+      </if>
+      <if test="accessToken != null" >
+        access_token = #{accessToken,jdbcType=VARCHAR},
+      </if>
+      <if test="accessCode != null" >
+        access_code=#{accessCode},
+      </if>
+    </set>
+    where source_uid = #{sourceUid}
+  </update>
+</mapper>
