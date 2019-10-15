@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.manage.mapper.PmsSkuAttrValueMapper" >
+  <resultMap id="BaseResultMap" type="com.qc.mall.bean.PmsSkuAttrValue" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="attr_id" property="attrId" jdbcType="BIGINT" />
+    <result column="value_id" property="valueId" jdbcType="BIGINT" />
+    <result column="sku_id" property="skuId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, attr_id, value_id, sku_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from pms_sku_attr_value
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pms_sku_attr_value
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qc.mall.bean.PmsSkuAttrValue" >
+    insert into pms_sku_attr_value (id, attr_id, value_id, 
+      sku_id)
+    values (#{id,jdbcType=BIGINT}, #{attrId,jdbcType=BIGINT}, #{valueId,jdbcType=BIGINT}, 
+      #{skuId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qc.mall.bean.PmsSkuAttrValue" >
+    insert into pms_sku_attr_value
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="attrId != null" >
+        attr_id,
+      </if>
+      <if test="valueId != null" >
+        value_id,
+      </if>
+      <if test="skuId != null" >
+        sku_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="attrId != null" >
+        #{attrId,jdbcType=BIGINT},
+      </if>
+      <if test="valueId != null" >
+        #{valueId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        #{skuId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.PmsSkuAttrValue" >
+    update pms_sku_attr_value
+    <set >
+      <if test="attrId != null" >
+        attr_id = #{attrId,jdbcType=BIGINT},
+      </if>
+      <if test="valueId != null" >
+        value_id = #{valueId,jdbcType=BIGINT},
+      </if>
+      <if test="skuId != null" >
+        sku_id = #{skuId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.PmsSkuAttrValue" >
+    update pms_sku_attr_value
+    set attr_id = #{attrId,jdbcType=BIGINT},
+      value_id = #{valueId,jdbcType=BIGINT},
+      sku_id = #{skuId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectBySkuId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pms_sku_attr_value
+    where sku_id = #{skuId}
+  </select>
+</mapper>

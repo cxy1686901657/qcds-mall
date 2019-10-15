@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.manage.mapper.PmsProductInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.qc.mall.bean.PmsProductInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="product_name" property="productName" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="catalog3_id" property="catalog3Id" jdbcType="BIGINT" />
+    <result column="tm_id" property="tmId" jdbcType="BIGINT" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_name, description, catalog3_id, tm_id
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from pms_product_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pms_product_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qc.mall.bean.PmsProductInfo" >
+    insert into pms_product_info (id, product_name, description, 
+      catalog3_id, tm_id)
+    values (#{id,jdbcType=BIGINT}, #{productName,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, 
+      #{catalog3Id,jdbcType=BIGINT}, #{tmId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qc.mall.bean.PmsProductInfo" >
+    insert into pms_product_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productName != null" >
+        product_name,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="catalog3Id != null" >
+        catalog3_id,
+      </if>
+      <if test="tmId != null" >
+        tm_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="productName != null" >
+        #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="catalog3Id != null" >
+        #{catalog3Id,jdbcType=BIGINT},
+      </if>
+      <if test="tmId != null" >
+        #{tmId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.PmsProductInfo" >
+    update pms_product_info
+    <set >
+      <if test="productName != null" >
+        product_name = #{productName,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="catalog3Id != null" >
+        catalog3_id = #{catalog3Id,jdbcType=BIGINT},
+      </if>
+      <if test="tmId != null" >
+        tm_id = #{tmId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.PmsProductInfo" >
+    update pms_product_info
+    set product_name = #{productName,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      catalog3_id = #{catalog3Id,jdbcType=BIGINT},
+      tm_id = #{tmId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByCataLogId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pms_product_info
+    where catalog3_id = #{catalog3Id}
+  </select>
+  <select id="selectByProductName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pms_product_info
+    where product_name = #{productName}
+  </select>
+</mapper>

@@ -1,0 +1,16 @@
+server:
+  port: 8001
+dubbo:
+  application:
+    name: manage-web
+  registry:
+    address: zookeeper://115.159.213.143:2182
+  protocol:
+    port: -1
+  consumer:
+    check: false
+    timeout: 3000
+#logging:
+#  level:
+#    root: debug
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.manage.mapper.PmsProductSaleAttrValueMapper" >
+  <resultMap id="BaseResultMap" type="com.qc.mall.bean.PmsProductSaleAttrValue" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="product_id" property="productId" jdbcType="BIGINT" />
+    <result column="sale_attr_id" property="saleAttrId" jdbcType="BIGINT" />
+    <result column="sale_attr_value_name" property="saleAttrValueName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_id, sale_attr_id, sale_attr_value_name
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from pms_product_sale_attr_value
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pms_product_sale_attr_value
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qc.mall.bean.PmsProductSaleAttrValue" >
+    insert into pms_product_sale_attr_value (id, product_id, sale_attr_id, 
+      sale_attr_value_name)
+    values (#{id,jdbcType=BIGINT}, #{productId,jdbcType=BIGINT}, #{saleAttrId,jdbcType=BIGINT}, 
+      #{saleAttrValueName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.qc.mall.bean.PmsProductSaleAttrValue" >
+    insert into pms_product_sale_attr_value
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="productId != null" >
+        product_id,
+      </if>
+      <if test="saleAttrId != null" >
+        sale_attr_id,
+      </if>
+      <if test="saleAttrValueName != null" >
+        sale_attr_value_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="productId != null" >
+        #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="saleAttrId != null" >
+        #{saleAttrId,jdbcType=BIGINT},
+      </if>
+      <if test="saleAttrValueName != null" >
+        #{saleAttrValueName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.PmsProductSaleAttrValue" >
+    update pms_product_sale_attr_value
+    <set >
+      <if test="productId != null" >
+        product_id = #{productId,jdbcType=BIGINT},
+      </if>
+      <if test="saleAttrId != null" >
+        sale_attr_id = #{saleAttrId,jdbcType=BIGINT},
+      </if>
+      <if test="saleAttrValueName != null" >
+        sale_attr_value_name = #{saleAttrValueName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.PmsProductSaleAttrValue" >
+    update pms_product_sale_attr_value
+    set product_id = #{productId,jdbcType=BIGINT},
+      sale_attr_id = #{saleAttrId,jdbcType=BIGINT},
+      sale_attr_value_name = #{saleAttrValueName,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectBySpuIdAndSaleAttrId" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pms_product_sale_attr_value
+    where product_id = #{productId} AND  sale_attr_id=#{saleAttrId}
+  </select>
+</mapper>

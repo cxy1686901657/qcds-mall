@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.manage.mapper.PmsSkuInfoMapper" >
+  <resultMap id="BaseResultMap" type="com.qc.mall.bean.PmsSkuInfo" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="product_id" property="spuId" jdbcType="BIGINT" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="sku_name" property="skuName" jdbcType="VARCHAR" />
+    <result column="sku_desc" property="skuDesc" jdbcType="VARCHAR" />
+    <result column="weight" property="weight" jdbcType="DOUBLE" />
+    <result column="tm_id" property="tmId" jdbcType="BIGINT" />
+    <result column="catalog3_id" property="catalog3Id" jdbcType="BIGINT" />
+    <result column="sku_default_img" property="skuDefaultImg" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, product_id, price, sku_name, sku_desc, weight, tm_id, catalog3_id, sku_default_img
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from pms_sku_info
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from pms_sku_info
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.qc.mall.bean.PmsSkuInfo" >
+    insert into pms_sku_info (id, product_id, price, 
+      sku_name, sku_desc, weight, 
+      tm_id, catalog3_id, sku_default_img
+      )
+    values (#{id,jdbcType=BIGINT}, #{spuId,jdbcType=BIGINT}, #{price,jdbcType=DOUBLE},
+      #{skuName,jdbcType=VARCHAR}, #{skuDesc,jdbcType=VARCHAR}, #{weight,jdbcType=DOUBLE}, 
+      #{tmId,jdbcType=BIGINT}, #{catalog3Id,jdbcType=BIGINT}, #{skuDefaultImg,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.qc.mall.bean.PmsSkuInfo" >
+    insert into pms_sku_info
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="spuId != null" >
+        product_id,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="skuName != null" >
+        sku_name,
+      </if>
+      <if test="skuDesc != null" >
+        sku_desc,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="tmId != null" >
+        tm_id,
+      </if>
+      <if test="catalog3Id != null" >
+        catalog3_id,
+      </if>
+      <if test="skuDefaultImg != null" >
+        sku_default_img,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="spuId != null" >
+        #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="skuName != null" >
+        #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuDesc != null" >
+        #{skuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="tmId != null" >
+        #{tmId,jdbcType=BIGINT},
+      </if>
+      <if test="catalog3Id != null" >
+        #{catalog3Id,jdbcType=BIGINT},
+      </if>
+      <if test="skuDefaultImg != null" >
+        #{skuDefaultImg,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.PmsSkuInfo" >
+    update pms_sku_info
+    <set >
+      <if test="spuId != null" >
+        product_id = #{spuId,jdbcType=BIGINT},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DOUBLE},
+      </if>
+      <if test="skuName != null" >
+        sku_name = #{skuName,jdbcType=VARCHAR},
+      </if>
+      <if test="skuDesc != null" >
+        sku_desc = #{skuDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=DOUBLE},
+      </if>
+      <if test="tmId != null" >
+        tm_id = #{tmId,jdbcType=BIGINT},
+      </if>
+      <if test="catalog3Id != null" >
+        catalog3_id = #{catalog3Id,jdbcType=BIGINT},
+      </if>
+      <if test="skuDefaultImg != null" >
+        sku_default_img = #{skuDefaultImg,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.PmsSkuInfo" >
+    update pms_sku_info
+    set product_id = #{spuId,jdbcType=BIGINT},
+      price = #{price,jdbcType=DOUBLE},
+      sku_name = #{skuName,jdbcType=VARCHAR},
+      sku_desc = #{skuDesc,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=DOUBLE},
+      tm_id = #{tmId,jdbcType=BIGINT},
+      catalog3_id = #{catalog3Id,jdbcType=BIGINT},
+      sku_default_img = #{skuDefaultImg,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectBySkuName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pms_sku_info
+    where sku_name = #{skuName}
+  </select>
+  <select id="selectSkuSaleAttrValueListBySpu" resultMap="selectSkuSaleAttrValueListBySpuMap">
+        SELECT
+            si.*,ssav.*,si.id as si_id ,ssav.id as ssav_id
+        FROM
+            pms_sku_info si,
+            pms_sku_sale_attr_value ssav
+        WHERE
+            si.product_id = #{spuId}
+        AND si.id = ssav.sku_id
+    </select>
+
+  <resultMap id="selectSkuSaleAttrValueListBySpuMap" type="com.qc.mall.bean.PmsSkuInfo" autoMapping="true">
+    <result column="si_id" property="id"></result>
+    <collection property="skuSaleAttrValueList" ofType="com.qc.mall.bean.PmsSkuSaleAttrValue" autoMapping="true">
+      <result column="ssav_id" property="id"></result>
+    </collection>
+  </resultMap>
+
+  <select id="getAll" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from pms_sku_info
+  </select>
+</mapper>
