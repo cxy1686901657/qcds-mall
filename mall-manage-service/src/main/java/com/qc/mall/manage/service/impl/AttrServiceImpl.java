@@ -90,7 +90,7 @@ public class AttrServiceImpl implements AttrService {
     @Override
     public List<PmsBaseAttrInfo> getAttrValueListByValueId(HashSet<String> valueIds) {
         String valueIdStr = StringUtils.join(valueIds, ",");//41,45,46
-        System.err.println(valueIdStr+"  ***");
+        log.info("{}",valueIdStr);
         List<PmsBaseAttrInfo> pmsBaseAttrInfos = pmsBaseAttrInfoMapper.selectAttrValueListByValueId(valueIdStr);
         return pmsBaseAttrInfos;
     }

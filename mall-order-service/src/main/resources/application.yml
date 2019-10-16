@@ -1,5 +1,5 @@
 server:
-  port: 7001
+  port: 7004
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   configuration:
@@ -20,7 +20,7 @@ spring:
       enable: true
 dubbo:
   application:
-    name: manage-service
+    name: order-service
   registry:
     address: zookeeper://115.159.213.143:2182
   protocol:

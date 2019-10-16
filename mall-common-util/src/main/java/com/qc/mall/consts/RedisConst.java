@@ -23,6 +23,11 @@ public interface RedisConst {
         String sufix = ":lock";
     }
 
+    interface TRADECODE{
+        String prefix = "user:";
+        String sufix = ":tradeCode";
+    }
+
 
     String prefix = "sku:";
     String sufix = ":info";
