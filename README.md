@@ -1,4 +1,7 @@
-#qcds-mall
+#*qcds-mall*
+---
+---
+---
 
 >>**user-service**端口7000
 **manage-service**端口7001
@@ -15,3 +18,4 @@
 **order-web**端口8006
 **payment**端口8007
 **seckill**端口8008
+**ware-manage**端口8009
