@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qc.mall.ware.mapper.WareSkuMapper">
+    <resultMap id="BaseResultMap" type="com.qc.mall.bean.WareSku">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="sku_id" property="skuId" jdbcType="BIGINT"/>
+        <result column="warehouse_id" property="warehouseId" jdbcType="BIGINT"/>
+        <result column="stock" property="stock" jdbcType="INTEGER"/>
+        <result column="stock_name" property="stockName" jdbcType="VARCHAR"/>
+        <result column="stock_locked" property="stockLocked" jdbcType="INTEGER"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, sku_id, warehouse_id, stock, stock_name, stock_locked
+  </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from wms_ware_sku
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from wms_ware_sku
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.qc.mall.bean.WareSku">
+    insert into wms_ware_sku (id, sku_id, warehouse_id, 
+      stock, stock_name, stock_locked
+      )
+    values (#{id,jdbcType=BIGINT}, #{skuId,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, 
+      #{stock,jdbcType=INTEGER}, #{stockName,jdbcType=VARCHAR}, #{stockLocked,jdbcType=INTEGER}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.qc.mall.bean.WareSku">
+        insert into wms_ware_sku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="skuId != null">
+                sku_id,
+            </if>
+            <if test="warehouseId != null">
+                warehouse_id,
+            </if>
+            <if test="stock != null">
+                stock,
+            </if>
+            <if test="stockName != null">
+                stock_name,
+            </if>
+            <if test="stockLocked != null">
+                stock_locked,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="skuId != null">
+                #{skuId,jdbcType=BIGINT},
+            </if>
+            <if test="warehouseId != null">
+                #{warehouseId,jdbcType=BIGINT},
+            </if>
+            <if test="stock != null">
+                #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="stockName != null">
+                #{stockName,jdbcType=VARCHAR},
+            </if>
+            <if test="stockLocked != null">
+                #{stockLocked,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.qc.mall.bean.WareSku">
+        update wms_ware_sku
+        <set>
+            <if test="skuId != null">
+                sku_id = #{skuId,jdbcType=BIGINT},
+            </if>
+            <if test="warehouseId != null">
+                warehouse_id = #{warehouseId,jdbcType=BIGINT},
+            </if>
+            <if test="stock != null">
+                stock = #{stock,jdbcType=INTEGER},
+            </if>
+            <if test="stockName != null">
+                stock_name = #{stockName,jdbcType=VARCHAR},
+            </if>
+            <if test="stockLocked != null">
+                stock_locked = #{stockLocked,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.qc.mall.bean.WareSku">
+    update wms_ware_sku
+    set sku_id = #{skuId,jdbcType=BIGINT},
+      warehouse_id = #{warehouseId,jdbcType=BIGINT},
+      stock = #{stock,jdbcType=INTEGER},
+      stock_name = #{stockName,jdbcType=VARCHAR},
+      stock_locked = #{stockLocked,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+    <select id="selectStockBySkuid" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select sum(stock-IFNULL(stock_locked,0)) from wms_ware_sku  where sku_id=#{skuid}
+    </select>
+    <select id="selectBySkuIdList" resultMap="BaseResultMap" parameterType="list">
+        select
+        <include refid="Base_Column_List"/>
+        from wms_ware_sku
+        <if test="partyOrganId!= null">
+            <where>
+                sku_id in
+                <foreach item="item" collection="list" separator="," open="(" close=")" index="">
+                    #{item}
+                </foreach>
+            </where>
+        </if>
+    </select>
+
+    <select id="selectWareSkuAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wms_ware_sku
+    </select>
+
+    <update id="deliveryStock" parameterType="com.qc.mall.bean.WareSku">
+        UPDATE  wms_ware_sku   SET  stock_locked=  stock_locked-#{stock},
+        stock=  stock-#{stock}
+        WHERE sku_id=#{skuId} and warehouse_id=#{warehouseId}
+    </update>
+
+    <select id="selectBySkuId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from wms_ware_sku
+        where sku_id=#{skuId}
+    </select>
+
+    <select id="selectStockBySkuidForUpdate" parameterType="com.qc.mall.bean.WareSku" resultType="java.lang.Integer">
+        select  stock-IFNULL(stock_locked,0) as available_stock from wms_ware_sku  where sku_id=#{skuId} and warehouse_id=#{warehouseId} for update
+    </select>
+
+    <update id="incrStockLocked" parameterType="com.qc.mall.bean.WareSku">
+        UPDATE  wms_ware_sku   SET  stock_locked=  IFNULL(stock_locked,0)+#{stockLocked}  WHERE sku_id=#{skuId} and warehouse_id=#{warehouseId}
+    </update>
+
+</mapper>
