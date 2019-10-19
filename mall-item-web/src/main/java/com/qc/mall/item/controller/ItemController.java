@@ -4,9 +4,12 @@ import com.alibaba.dubbo.config.annotation.Reference;
 import com.qc.mall.bean.PmsProductSaleAttr;
 import com.qc.mall.bean.PmsSkuInfo;
 import com.qc.mall.bean.PmsSkuSaleAttrValue;
+import com.qc.mall.consts.MqQueueConst;
 import com.qc.mall.service.SkuService;
 import com.qc.mall.service.SpuService;
+import com.qc.mall.util.ActiveMQUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +35,9 @@ public class ItemController {
 
     @Reference
     SpuService spuService;
+
+    @Autowired
+    ActiveMQUtil activeMQUtil;
 
     @GetMapping("/{skuId}.html")
     public String item(@PathVariable String skuId, Model model) throws InterruptedException {
@@ -61,6 +67,10 @@ public class ItemController {
 ////        String skuSaleAttrHashJsonStr = JSON.toJSONString(skuSaleAttrHash);
         model.addAttribute("skuSaleAttrHashJsonStr",skuSaleAttrHashJsonStr);
 
+        HashMap<String, String> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("skuId", skuId);
+        activeMQUtil.sendTransactedMapMessage(MqQueueConst.INCR_HOTSCORE, objectObjectHashMap);
+        log.info("{}热度消息发送成功",skuId);
         return "item";
     }
 }

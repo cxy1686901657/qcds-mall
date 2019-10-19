@@ -1,5 +1,26 @@
 server:
   port: 8002
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  configuration:
+    map-underscore-to-camel-case: true
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/jmall?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+  myredis:
+    host: 115.159.213.143
+    port: 6379
+    database: 15
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+  activemq:
+    broker-url: tcp://115.159.213.143:61616
+    listener:
+      enable: true
 dubbo:
   application:
     name: item-web
@@ -9,11 +30,12 @@ dubbo:
     port: -1
   consumer:
     check: false
-    timeout: 3000
-spring:
-  thymeleaf:
-    cache: false
-    mode: LEGACYHTML5
+    timeout: 5000
+  scan:
+    base-packages: com.qc.mall
+
+
+
 #logging:
 #  level:
 #    root: debug

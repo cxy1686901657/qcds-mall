@@ -10,10 +10,12 @@ import com.qc.mall.consts.ESConst;
 import com.qc.mall.parm.PmsSearchParam;
 import com.qc.mall.service.SearchService;
 import com.qc.mall.service.SkuService;
+import com.qc.mall.util.RedisUtil;
 import io.searchbox.client.JestClient;
 import io.searchbox.core.Index;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import io.searchbox.core.Update;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +27,7 @@ import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,29 +48,32 @@ public class SearchServiceImpl implements SearchService {
 
     @Autowired
     JestClient jestClient;
+    @Autowired
+    RedisUtil redisUtil;
+
 
     @Override
     public List<PmsSearchSkuInfo> list(PmsSearchParam pmsSearchParam) {
-        String dsl=getSearchDsl(pmsSearchParam);
+        String dsl = getSearchDsl(pmsSearchParam);
 
         Search build = new Search.Builder(dsl).addIndex(ESConst.INDEX).addType(ESConst.TPYE).build();
 
-        log.info("执行查询：dsl={}",build);
+        log.info("执行查询：dsl={}", build);
 
         List<PmsSearchSkuInfo> pmsSearchSkuInfos = new ArrayList<>();
 
-        SearchResult execute=null;
+        SearchResult execute = null;
         try {
-             execute = jestClient.execute(build);
+            execute = jestClient.execute(build);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         List<SearchResult.Hit<PmsSearchSkuInfo, Void>> hits = execute.getHits(PmsSearchSkuInfo.class);
 
-        hits.stream().forEach(x->{
+        hits.stream().forEach(x -> {
             Map<String, List<String>> highlight = x.highlight;
-            if(x.highlight!=null){
+            if (x.highlight != null) {
                 x.source.setSkuName(highlight.get("skuName").get(0));
             }
             pmsSearchSkuInfos.add(x.source);
@@ -78,7 +84,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public void sync(PmsSkuInfo pmsSkuInfo) throws Exception{
+    public void sync(PmsSkuInfo pmsSkuInfo) throws Exception {
 //        // 查询mysql数据
 //        List<PmsSkuInfo> pmsSkuInfoList ;
 //
@@ -88,16 +94,44 @@ public class SearchServiceImpl implements SearchService {
 //        List<PmsSearchSkuInfo> pmsSearchSkuInfos = new ArrayList<>();
 
 //        for (PmsSkuInfo pmsSkuInfo : pmsSkuInfoList) {
-            PmsSearchSkuInfo pmsSearchSkuInfo = new PmsSearchSkuInfo();
-            BeanUtils.copyProperties(pmsSearchSkuInfo, pmsSkuInfo);
+        PmsSearchSkuInfo pmsSearchSkuInfo = new PmsSearchSkuInfo();
+        BeanUtils.copyProperties(pmsSearchSkuInfo, pmsSkuInfo);
 //            pmsSearchSkuInfos.add(pmsSearchSkuInfo);
 //        }
 
         // 导入es
 //        for (PmsSearchSkuInfo pmsSearchSkuInfo : pmsSearchSkuInfos) {
-            Index put = new Index.Builder(pmsSearchSkuInfo).index(ESConst.INDEX).type(ESConst.TPYE).id(pmsSearchSkuInfo.getId()+"").build();
-            jestClient.execute(put);
+        Index put = new Index.Builder(pmsSearchSkuInfo).index(ESConst.INDEX).type(ESConst.TPYE).id(pmsSearchSkuInfo.getId() + "").build();
+        jestClient.execute(put);
 //        }
+    }
+
+    @Override
+    public void incrHotScore(String skuId) {
+        Jedis jedis = redisUtil.getJedis();
+        int timesToEs = 10;
+        Double hotScore = jedis.zincrby("hotScore", 1, "skuId:" + skuId);
+        if (hotScore % timesToEs == 0) {
+            updateHotScore(skuId, Math.round(hotScore));
+        }
+        jedis.close();
+    }
+
+    @Override
+    public void updateHotScore(String skuId, Long hotScore) {
+        String updateJson = "{\n" +
+                "   \"doc\":{\n" +
+                "     \"hotScore\":" + hotScore + "\n" +
+                "   }\n" +
+                "}";
+
+        Update update = new Update.Builder(updateJson).index(ESConst.INDEX).type(ESConst.TPYE).id(skuId).build();
+        try {
+            jestClient.execute(update);
+            log.info("{}商品热度更新成功", skuId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -113,20 +147,20 @@ public class SearchServiceImpl implements SearchService {
         BoolQueryBuilder boolQueryBuilder = new BoolQueryBuilder();
 
         // filter
-        if(StringUtils.isNotBlank(catalog3Id)){
-            TermQueryBuilder termQueryBuilder = new TermQueryBuilder("catalog3Id",catalog3Id);
+        if (StringUtils.isNotBlank(catalog3Id)) {
+            TermQueryBuilder termQueryBuilder = new TermQueryBuilder("catalog3Id", catalog3Id);
             boolQueryBuilder.filter(termQueryBuilder);
         }
-        if(skuAttrValueList!=null){
+        if (skuAttrValueList != null) {
             for (String pmsSkuAttrValue : skuAttrValueList) {
-                TermQueryBuilder termQueryBuilder = new TermQueryBuilder("skuAttrValueList.valueId",pmsSkuAttrValue);
+                TermQueryBuilder termQueryBuilder = new TermQueryBuilder("skuAttrValueList.valueId", pmsSkuAttrValue);
                 boolQueryBuilder.filter(termQueryBuilder);
             }
         }
 
         // must
-        if(StringUtils.isNotBlank(keyword)){
-            MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("skuName",keyword);
+        if (StringUtils.isNotBlank(keyword)) {
+            MatchQueryBuilder matchQueryBuilder = new MatchQueryBuilder("skuName", keyword);
             boolQueryBuilder.must(matchQueryBuilder);
         }
 
@@ -148,9 +182,6 @@ public class SearchServiceImpl implements SearchService {
         return searchSourceBuilder.toString();
 
     }
-
-
-
 
 
 }

@@ -36,4 +36,14 @@ public class SearchServiceMqListener {
         }
     }
 
+    @JmsListener(destination = MqQueueConst.INCR_HOTSCORE,containerFactory = "jmsQueueListener")
+    public void consumeINCR_HOTSCORE(MapMessage mapMessage) throws JMSException {
+        String skuId = mapMessage.getString("skuId");
+        try {
+            searchService.incrHotScore(skuId);
+            log.info("SKU_ADDTO_ES消费成功+入参{}",skuId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

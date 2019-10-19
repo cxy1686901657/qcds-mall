@@ -16,4 +16,19 @@ public interface SearchService {
     List<PmsSearchSkuInfo> list(PmsSearchParam pmsSearchParam);
 
     void sync(PmsSkuInfo pmsSkuInfo) throws Exception;
+
+    /**
+     * 点击增长热度
+     * @param skuId
+     */
+    void incrHotScore(String skuId);
+
+    /**
+     * 更新热度
+     * @param skuId
+     * @param hotScore
+     */
+    void updateHotScore(String skuId,Long hotScore);
+
+
 }
