@@ -27,10 +27,11 @@ public interface MqQueueConst {
     String ORDER_SUCCESS_QUEUE="ORDER_SUCCESS_QUEUE";
 
 
-
+    String INCR_HOTSCORE="INCR_HOTSCORE";
 
     //添加sku到缓存队列
     String SKU_ADDTO_CACHE="SKU_ADDTO_CACHE";
 
-
+    //更新购物车
+    String UPDATE_CART="UPDATE_CART";
 }

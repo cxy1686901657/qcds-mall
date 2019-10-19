@@ -30,7 +30,10 @@ public interface RedisConst {
     interface SPU_SKU_HASH{
         String prefix = "spu_sku_hash:";
     }
-
+    interface CART{
+        String prefix = "user:";
+        String sufix = ":cart";
+    }
 
     String prefix = "sku:";
     String sufix = ":info";

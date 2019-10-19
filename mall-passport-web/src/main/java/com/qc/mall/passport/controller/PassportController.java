@@ -3,14 +3,17 @@ package com.qc.mall.passport.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import com.qc.mall.bean.UmsMember;
+import com.qc.mall.consts.MqQueueConst;
 import com.qc.mall.consts.OauthConst;
 import com.qc.mall.enums.SourceTypeEnum;
 import com.qc.mall.service.UserService;
+import com.qc.mall.util.ActiveMQUtil;
 import com.qc.mall.util.JwtUtil;
 import com.qc.mall.util.NetworkUtil;
 import com.qc.mall.utils.HttpclientUtil;
 import com.sun.org.apache.regexp.internal.RE;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +38,8 @@ public class PassportController {
 
     @Reference
     UserService userService;
+    @Autowired
+    ActiveMQUtil activeMQUtil;
 
     @RequestMapping("glogin")
     public String glogin(String code, String ReturnUrl, HttpServletRequest request) {
@@ -181,7 +186,10 @@ public class PassportController {
 
             // 将token存入redis一份
             userService.addUserToken(token, umsMemberLogin);
-
+            //登录成功发送购物车消息
+            HashMap<String, String> stringStringHashMap = new HashMap<>();
+            stringStringHashMap.put("memberId", umsMemberLogin.getId());
+            activeMQUtil.sendTransactedMapMessage(MqQueueConst.UPDATE_CART, stringStringHashMap);
         } else {
             // 登录失败
             token = "fail";
