@@ -2,6 +2,7 @@ package com.qc.mall.search.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.qc.mall.bean.PmsSearchSkuInfo;
 import com.qc.mall.bean.PmsSkuAttrValue;
 import com.qc.mall.bean.PmsSkuInfo;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +72,8 @@ public class SearchServiceImpl implements SearchService {
             }
             pmsSearchSkuInfos.add(x.source);
         });
-
+        Collections.sort(pmsSearchSkuInfos);
+//        log.info("paixuhou  ++{}", JSON.toJSON(pmsSearchSkuInfos));
         return pmsSearchSkuInfos;
     }
 
@@ -97,9 +100,10 @@ public class SearchServiceImpl implements SearchService {
 //        }
     }
 
+
     private String getSearchDsl(PmsSearchParam pmsSearchParam) {
 
-         String[] skuAttrValueList = pmsSearchParam.getValueId();
+        String[] skuAttrValueList = pmsSearchParam.getValueId();
         String keyword = pmsSearchParam.getKeyword();
         String catalog3Id = pmsSearchParam.getCatalog3Id();
 
@@ -134,8 +138,8 @@ public class SearchServiceImpl implements SearchService {
         highlightBuilder.field("skuName");
         highlightBuilder.postTags("</span>");
         searchSourceBuilder.highlighter(highlightBuilder);
-        // sort
-        searchSourceBuilder.sort("id",SortOrder.DESC);
+//        // sort
+//        searchSourceBuilder.sort("id",SortOrder.DESC);
         // from
         searchSourceBuilder.from(0);
         // size
@@ -144,6 +148,8 @@ public class SearchServiceImpl implements SearchService {
         return searchSourceBuilder.toString();
 
     }
+
+
 
 
 

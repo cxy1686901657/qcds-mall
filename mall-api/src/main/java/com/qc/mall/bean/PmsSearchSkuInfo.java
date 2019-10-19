@@ -13,7 +13,7 @@ import java.util.List;
  * @project mall
  */
 @Data
-public class PmsSearchSkuInfo implements Serializable {
+public class PmsSearchSkuInfo implements Serializable,Comparable<PmsSearchSkuInfo>{
     private String id;
     private String skuName;
     private String skuDesc;
@@ -24,4 +24,13 @@ public class PmsSearchSkuInfo implements Serializable {
     private String productId;
     List<PmsSkuAttrValue> skuAttrValueList;
 
+    @Override
+    public int compareTo(PmsSearchSkuInfo o) {
+        if (this.hotScore-(o.getHotScore())>0){
+            return -1;
+        }else if (this.hotScore-(o.getHotScore())==0){
+            return 0;
+        }
+        return 1;
+    }
 }
