@@ -69,7 +69,7 @@ public class ItemController {
 
         HashMap<String, String> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("skuId", skuId);
-        activeMQUtil.sendTransactedMapMessage(MqQueueConst.INCR_HOTSCORE, objectObjectHashMap);
+        activeMQUtil.sendDelayTransactedMapMessage(MqQueueConst.INCR_HOTSCORE, objectObjectHashMap);
         log.info("{}热度消息发送成功",skuId);
         return "item";
     }
