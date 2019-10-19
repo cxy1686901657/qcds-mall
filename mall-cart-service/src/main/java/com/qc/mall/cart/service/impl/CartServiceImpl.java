@@ -4,6 +4,7 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.qc.mall.bean.OmsCartItem;
 import com.qc.mall.cart.mapper.OmsCartItemMapper;
+import com.qc.mall.consts.RedisConst;
 import com.qc.mall.service.CartService;
 import com.qc.mall.util.RedisUtil;
 import lombok.Cleanup;
@@ -57,8 +58,7 @@ public class CartServiceImpl implements CartService {
 //            cartItem.setTotalPrice(cartItem.getPrice().multiply(cartItem.getQuantity()));
 //            map.put(cartItem.getProductSkuId(), JSON.toJSONString(cartItem));
 //        }
-
-        //TODO  保存到redis
+        jedis.setex(RedisConst.CART.prefix+memberId+RedisConst.CART.sufix,7200,JSON.toJSONString(omsCartItems) );
     }
 
     @Override
