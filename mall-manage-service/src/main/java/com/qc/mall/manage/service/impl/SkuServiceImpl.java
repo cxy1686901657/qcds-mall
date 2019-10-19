@@ -141,6 +141,7 @@ public class SkuServiceImpl implements SkuService {
             jedis = redisUtil.getJedis();
             String s = jedis.get(RedisConst.SPU_SKU_HASH.prefix + spuId);
             if (StringUtils.isNotBlank(s)) {
+                log.info("缓存命中");
                 return s;
             }
             List<PmsSkuInfo> pmsSkuInfos = pmsSkuInfoMapper.selectSkuSaleAttrValueListBySpu(spuId);
@@ -157,6 +158,7 @@ public class SkuServiceImpl implements SkuService {
             });
             skuSaleAttrHashJsonStr = JSON.toJSONString(skuSaleAttrHash);
             jedis.setex(RedisConst.SPU_SKU_HASH.prefix+spuId, 36000, skuSaleAttrHashJsonStr);
+            log.info("缓存插入成功{}",skuSaleAttrHash);
         } catch (Exception e) {
             log.error("缓存更新异常{}", e);
         } finally {

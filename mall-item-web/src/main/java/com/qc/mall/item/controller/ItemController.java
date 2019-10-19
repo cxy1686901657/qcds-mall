@@ -42,20 +42,23 @@ public class ItemController {
         List<PmsProductSaleAttr> pmsProductSaleAttrList= spuService.spuSaleAttrListCheckBySku(pmsSkuInfo.getSpuId(),skuId);
         model.addAttribute("spuSaleAttrListCheckBySku", pmsProductSaleAttrList);
 
-        List<PmsSkuInfo> pmsSkuInfos = skuService.getSkuSaleAttrValueListBySpu(pmsSkuInfo.getSpuId());
-        Map<String, String> skuSaleAttrHash = new HashMap<>();
-          pmsSkuInfos.stream().forEach(x->{
-              String k = "";
-              String v = x.getId();
+        //构建商品的hash表同一个spu不用重复构建 可以放入缓存 重复使用
+        String skuSaleAttrHashJsonStr = skuService.getSkuSaleAttrValueListBySpu(pmsSkuInfo.getSpuId());
 
-              List<PmsSkuSaleAttrValue> skuSaleAttrValueList = x.getSkuSaleAttrValueList();
-              for (PmsSkuSaleAttrValue pmsSkuSaleAttrValue : skuSaleAttrValueList) {
-                  k += pmsSkuSaleAttrValue.getSaleAttrValueId() + "|";// "239|245"
-              }
-              skuSaleAttrHash.put(k,v);
-          });
-
-        String skuSaleAttrHashJsonStr = JSON.toJSONString(skuSaleAttrHash);
+//        List<PmsSkuInfo> pmsSkuInfos = skuService.getSkuSaleAttrValueListBySpu(pmsSkuInfo.getSpuId());
+////        Map<String, String> skuSaleAttrHash = new HashMap<>();
+////          pmsSkuInfos.stream().forEach(x->{
+////              String k = "";
+////              String v = x.getId();
+////
+////              List<PmsSkuSaleAttrValue> skuSaleAttrValueList = x.getSkuSaleAttrValueList();
+////              for (PmsSkuSaleAttrValue pmsSkuSaleAttrValue : skuSaleAttrValueList) {
+////                  k += pmsSkuSaleAttrValue.getSaleAttrValueId() + "|";// "239|245"
+////              }
+////              skuSaleAttrHash.put(k,v);
+////          });
+////
+////        String skuSaleAttrHashJsonStr = JSON.toJSONString(skuSaleAttrHash);
         model.addAttribute("skuSaleAttrHashJsonStr",skuSaleAttrHashJsonStr);
 
         return "item";
