@@ -25,10 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import redis.clients.jedis.Jedis;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author qc
@@ -84,7 +81,7 @@ public class SkuServiceImpl implements SkuService {
         HashMap<String, String> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("pmsSkuInfo", JSON.toJSONString(pmsSkuInfo));
         activeMQUtil.sendTransactedMapMessage(MqQueueConst.SKU_ADDTO_ES, objectObjectHashMap);
-        log.info("SKU_ADDTO_ES消息发送成功+参数{}",pmsSkuInfo);
+        log.info("SKU_ADDTO_ES消息发送成功+参数{}", pmsSkuInfo);
     }
 
     @Override
@@ -137,8 +134,35 @@ public class SkuServiceImpl implements SkuService {
     }
 
     @Override
-    public List<PmsSkuInfo> getSkuSaleAttrValueListBySpu(String spuId) {
-        return pmsSkuInfoMapper.selectSkuSaleAttrValueListBySpu(spuId);
+    public String getSkuSaleAttrValueListBySpu(String spuId) {
+        String skuSaleAttrHashJsonStr = null;
+        Jedis jedis = null;
+        try {
+            jedis = redisUtil.getJedis();
+            String s = jedis.get(RedisConst.SPU_SKU_HASH.prefix + spuId);
+            if (StringUtils.isNotBlank(s)) {
+                return s;
+            }
+            List<PmsSkuInfo> pmsSkuInfos = pmsSkuInfoMapper.selectSkuSaleAttrValueListBySpu(spuId);
+            Map<String, String> skuSaleAttrHash = new HashMap<>();
+            pmsSkuInfos.stream().forEach(x -> {
+                String k = "";
+                String v = x.getId();
+
+                List<PmsSkuSaleAttrValue> skuSaleAttrValueList = x.getSkuSaleAttrValueList();
+                for (PmsSkuSaleAttrValue pmsSkuSaleAttrValue : skuSaleAttrValueList) {
+                    k += pmsSkuSaleAttrValue.getSaleAttrValueId() + "|";// "239|245"
+                }
+                skuSaleAttrHash.put(k, v);
+            });
+            skuSaleAttrHashJsonStr = JSON.toJSONString(skuSaleAttrHash);
+            jedis.setex(RedisConst.SPU_SKU_HASH.prefix+spuId, 36000, skuSaleAttrHashJsonStr);
+        } catch (Exception e) {
+            log.error("缓存更新异常{}", e);
+        } finally {
+            jedis.close();
+        }
+        return skuSaleAttrHashJsonStr;
     }
 
     @Override

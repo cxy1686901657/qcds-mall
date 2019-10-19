@@ -13,7 +13,7 @@ spring:
   myredis:
     host: 115.159.213.143
     port: 6379
-    database: 15
+    database: 14
   activemq:
     broker-url: tcp://115.159.213.143:61616
     listener:

@@ -27,6 +27,9 @@ public interface RedisConst {
         String prefix = "user:";
         String sufix = ":tradeCode";
     }
+    interface SPU_SKU_HASH{
+        String prefix = "spu_sku_hash:";
+    }
 
 
     String prefix = "sku:";

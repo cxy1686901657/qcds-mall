@@ -16,7 +16,7 @@ public interface SkuService {
 
     PmsSkuInfo getSkuById(String skuId) throws InterruptedException;
 
-    List<PmsSkuInfo> getSkuSaleAttrValueListBySpu(String spuId);
+    String getSkuSaleAttrValueListBySpu(String spuId);
 
     List<PmsSkuInfo> getAll();
 
