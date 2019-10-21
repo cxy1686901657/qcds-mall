@@ -3,7 +3,9 @@ package com.qc.mall.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.qc.mall.annotations.LoginRequired;
+import com.qc.mall.consts.Common;
 import com.qc.mall.util.CookieUtil;
+import com.qc.mall.util.LocalMac;
 import com.qc.mall.util.NetworkUtil;
 import com.qc.mall.utils.HttpclientUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -36,29 +38,22 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             return true;
         }
         String token = "";
-        String oldToken = CookieUtil.getCookieValue(request, "oldToken", true);
+        String oldToken = CookieUtil.getCookieValue(request, Common.oldToken, true);
 
         if(StringUtils.isNotBlank(oldToken)){
             token = oldToken;
         }
-        String newToken = request.getParameter("token");
+        String newToken = request.getParameter(Common.token);
         if(StringUtils.isNotBlank(newToken)){
             token = newToken;
         }
         // 是否必须登录
         boolean loginSuccess = methodAnnotation.loginSuccess();// 获得该请 求是否必登录成功
         // 调用认证中心进行验证
-        String success = "fail";
+        String success = Common.FLAG_FAIL;
         Map<String,String> successMap = new HashMap<>();
         if(StringUtils.isNotBlank(token)){
-            String ip = request.getHeader("x-forwarded-for");// 通过nginx转发的客户端ip
-            if(StringUtils.isBlank(ip)){
-                ip = request.getRemoteAddr();// 从request中获取ip
-                if(StringUtils.isBlank(ip)){
-                    ip = "0:0:0:0:0:0:0:1";
-                }
-            }
-            String successJson  = HttpclientUtil.doGet("http://localhost:8005/verify?token=" + token+"&currentIp=127.0.0.1");
+            String successJson  = HttpclientUtil.doGet("http://localhost:8005/verify?token=" + token+"&currentMac="+LocalMac.getLocalMac());
 //            System.out.println("http://localhost:8005/verify?token=" + token+"&currentIp="+ip);
             try {
                 successMap = JSON.parseObject(successJson,Map.class);

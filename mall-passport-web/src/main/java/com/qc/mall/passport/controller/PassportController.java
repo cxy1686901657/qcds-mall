@@ -3,12 +3,14 @@ package com.qc.mall.passport.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import com.qc.mall.bean.UmsMember;
+import com.qc.mall.consts.Common;
 import com.qc.mall.consts.MqQueueConst;
 import com.qc.mall.consts.OauthConst;
 import com.qc.mall.enums.SourceTypeEnum;
 import com.qc.mall.service.UserService;
 import com.qc.mall.util.ActiveMQUtil;
 import com.qc.mall.util.JwtUtil;
+import com.qc.mall.util.LocalMac;
 import com.qc.mall.util.NetworkUtil;
 import com.qc.mall.utils.HttpclientUtil;
 import com.sun.org.apache.regexp.internal.RE;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +46,7 @@ public class PassportController {
     ActiveMQUtil activeMQUtil;
 
     @RequestMapping("glogin")
-    public String glogin(String code, String ReturnUrl, HttpServletRequest request) {
+    public String glogin(String code, String ReturnUrl, HttpServletRequest request) throws SocketException, UnknownHostException {
         String url = "https://github.com/login/oauth/access_token";
         Map<String, String> param = new HashMap<>();
         param.put("client_id", OauthConst.Github.CLIENT_ID);
@@ -100,7 +104,7 @@ public class PassportController {
      * @date 2019/9/26
      */
     @RequestMapping("vlogin")
-    public String vlogin(String code, String ReturnUrl, HttpServletRequest request) {
+    public String vlogin(String code, String ReturnUrl, HttpServletRequest request) throws SocketException, UnknownHostException {
         String s3 = "https://api.weibo.com/oauth2/access_token?";
         Map<String, String> paramMap = new HashMap<>();
         paramMap.put("client_id", OauthConst.WeiBo.CLIENT_ID);
@@ -152,12 +156,12 @@ public class PassportController {
 
     @GetMapping("verify")
     @ResponseBody
-    public String verify(String token, String currentIp) {
+    public String verify(String token, String currentMac) {
 
         // 通过jwt校验token真假
         Map<String, String> map = new HashMap<>();
 
-        Map<String, Object> decode = JwtUtil.decode(token, "mall", currentIp);
+        Map<String, Object> decode = JwtUtil.decode(token, "mall", currentMac);
         if (decode != null) {
             map.put("status", "success");
             map.put("memberId", (String) decode.get("memberId"));
@@ -172,7 +176,7 @@ public class PassportController {
 
     @RequestMapping("login")
     @ResponseBody
-    public String login(UmsMember umsMember, HttpServletRequest request) {
+    public String login(UmsMember umsMember, HttpServletRequest request) throws SocketException, UnknownHostException {
 
         String token = "";
         // 调用用户服务验证用户名和密码
@@ -180,10 +184,8 @@ public class PassportController {
 
         if (umsMemberLogin != null) {
             // 登录成功
-
             // 按照设计的算法对参数进行加密后，生成token
             token = makeToken(umsMemberLogin.getId(), umsMemberLogin.getNickname(), request);
-
             // 将token存入redis一份
             userService.addUserToken(token, umsMemberLogin);
             //登录成功发送购物车消息
@@ -192,7 +194,7 @@ public class PassportController {
             activeMQUtil.sendTransactedMapMessage(MqQueueConst.UPDATE_CART, stringStringHashMap);
         } else {
             // 登录失败
-            token = "fail";
+            token = Common.FLAG_FAIL;
         }
         return token;
     }
@@ -200,29 +202,19 @@ public class PassportController {
     @GetMapping("index")
     public String index(String ReturnUrl, ModelMap map) {
         if (StringUtils.isNotBlank(ReturnUrl)) {
-            map.put("ReturnUrl", ReturnUrl);
+            map.put(Common.ReturnUrl, ReturnUrl);
         }
         return "index";
     }
 
-    private String makeToken(String id, String nickName, HttpServletRequest request) {
+    private String makeToken(String id, String nickName, HttpServletRequest request) throws SocketException, UnknownHostException {
         // 用jwt制作token
         String memberId = id;
         String nickname = nickName;
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("memberId", memberId);
         userMap.put("nickname", nickname);
-
-//        String ip = request.getHeader("x-forwarded-for");// 通过nginx转发的客户端ip
-//        if(StringUtils.isBlank(ip)){
-//            ip = request.getRemoteAddr();// 从request中获取ip
-//            if(StringUtils.isBlank(ip)){
-//                ip = "0:0:0:0:0:0:0:1";
-//            }
-//        }
-
         // 按照设计的算法对参数进行加密后，生成token
-//        return JwtUtil.encode("mall", userMap, NetworkUtil.getIpAddress(request));
-        return JwtUtil.encode("mall", userMap, "127.0.0.1");
+        return JwtUtil.encode("mall", userMap, LocalMac.getLocalMac());
     }
 }
