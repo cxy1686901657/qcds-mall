@@ -28,7 +28,8 @@ public class CartServiceMqListener {
     }
     @JmsListener(destination = MqQueueConst.UPDATE_CART,containerFactory = "jmsQueueListener")
     public void consumeUPDATE_CART(MapMessage mapMessage) throws JMSException {
-        String memberId = mapMessage.getString("memberId");
-        cartService.flushCartCache(memberId);
+//        String memberId = mapMessage.getString("memberId");
+//        cartService.flushCartCache(memberId);
+        //TODO
     }
 }
