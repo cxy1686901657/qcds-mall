@@ -8,14 +8,13 @@ import com.qc.mall.consts.RedisConst;
 import com.qc.mall.service.CartService;
 import com.qc.mall.util.RedisUtil;
 import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author qc
@@ -25,6 +24,7 @@ import java.util.Map;
  */
 @Service
 @Component
+@Slf4j
 public class CartServiceImpl implements CartService {
     @Autowired
     OmsCartItemMapper omsCartItemMapper;
@@ -35,7 +35,6 @@ public class CartServiceImpl implements CartService {
         OmsCartItem omsCartItem = omsCartItemMapper.selectOneByMemberIdAndSkuId(memberId,skuId);
         return omsCartItem;
     }
-
     @Override
     public void addCart(OmsCartItem omsCartItem) {
         if (StringUtils.isNotBlank(omsCartItem.getMemberId())) {
@@ -53,25 +52,49 @@ public class CartServiceImpl implements CartService {
         List<OmsCartItem> omsCartItems = omsCartItemMapper.selectAllByMemberId(memberId);
         // 同步到redis缓存中
         @Cleanup Jedis jedis = redisUtil.getJedis();
-        Map<String,String> map = new HashMap<>();
-//        for (OmsCartItem cartItem : omsCartItems) {
-//            cartItem.setTotalPrice(cartItem.getPrice().multiply(cartItem.getQuantity()));
-//            map.put(cartItem.getProductSkuId(), JSON.toJSONString(cartItem));
-//        }
-        jedis.setex(RedisConst.CART.prefix+memberId+RedisConst.CART.sufix,7200,JSON.toJSONString(omsCartItems) );
+        jedis.set(RedisConst.CART.prefix+memberId+RedisConst.CART.sufix,JSON.toJSONString(omsCartItems));
     }
 
     @Override
     public List<OmsCartItem> cartList(String memberId) {
-        List<OmsCartItem> omsCartItems = omsCartItemMapper.selectAllByMemberId(memberId);
-        return omsCartItems;
+        Jedis jedis=redisUtil.getJedis();
+        try{
+            String s = jedis.get(RedisConst.CART.prefix + memberId + RedisConst.CART.sufix);
+            if(s.equals("")||StringUtils.isBlank(s)){
+                List<OmsCartItem> omsCartItems = omsCartItemMapper.selectAllByMemberId(memberId);
+                jedis.set(RedisConst.CART.prefix + memberId +
+                        RedisConst.CART.sufix, JSON.toJSONString(omsCartItems));
+                return omsCartItems;
+            }else{
+                return JSON.parseArray(s, OmsCartItem.class);
+            }
+        }catch (Exception e){
+            log.error("{}",e);
+        }finally {
+            jedis.close();
+        }
+        return null;
     }
 
     @Override
     public void checkCart(OmsCartItem omsCartItem) {
-
+//        Jedis jedis=redisUtil.getJedis();
+//        try{
+//            String s = jedis.get(RedisConst.CART.prefix + omsCartItem.getMemberId() + RedisConst.CART.sufix);
+//            List<OmsCartItem> omsCartItems = JSON.parseArray(s, OmsCartItem.class);
+//            omsCartItems.stream().forEach(x->{
+//                if(x.getProductSkuId().equals(omsCartItem.getProductSkuId())){
+//                    x.setIsChecked(omsCartItem.getIsChecked());
+//                }
+//            });
+//            jedis.set(RedisConst.CART.prefix + omsCartItem.getMemberId() +
+//                    RedisConst.CART.sufix, JSON.toJSONString(omsCartItems));
+//        }catch (Exception e){
+//            log.error("{}",e);
+//        }finally {
+//            jedis.close();
+//        }
         omsCartItemMapper.updateByMemberIdAndSkuId(omsCartItem.getMemberId(),omsCartItem.getProductSkuId(),omsCartItem.getIsChecked());
-
         // 缓存同步
         flushCartCache(omsCartItem.getMemberId());
     }
