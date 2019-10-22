@@ -22,4 +22,6 @@ public interface CartService {
     List<OmsCartItem> cartList(String memberId);
 
     void checkCart(OmsCartItem omsCartItem);
+
+    void syncflushCartCache(String memberId);
 }

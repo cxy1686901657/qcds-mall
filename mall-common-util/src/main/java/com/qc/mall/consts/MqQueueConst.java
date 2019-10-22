@@ -7,6 +7,8 @@ package com.qc.mall.consts;
  * @project mall
  */
 public interface MqQueueConst {
+    //购物车更新添加的更新缓存
+    String UPDATE_CARTCACHE="UPDATE_CARTCACHE";
 
     //提交订单的延迟检查(支付服务)->(延迟队列)
     String PAYMENT_CHECK_QUEUE="PAYMENT_CHECK_QUEUE";
@@ -32,6 +34,6 @@ public interface MqQueueConst {
     //添加sku到缓存队列
     String SKU_ADDTO_CACHE="SKU_ADDTO_CACHE";
 
-    //更新购物车
+    //更新购物车，（登录）
     String UPDATE_CART="UPDATE_CART";
 }

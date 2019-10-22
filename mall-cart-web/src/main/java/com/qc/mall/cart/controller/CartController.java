@@ -130,7 +130,9 @@ public class CartController {
                 cartService.updateCart(omsCartItemFromDb);
             }
             // 同步缓存
-            cartService.flushCartCache(memberId);
+//            cartService.flushCartCache(memberId);
+            cartService.syncflushCartCache(memberId);
+
         }
         return "redirect:/success";
     }
