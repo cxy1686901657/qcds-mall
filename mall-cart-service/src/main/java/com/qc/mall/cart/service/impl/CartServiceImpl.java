@@ -4,8 +4,10 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.alibaba.fastjson.JSON;
 import com.qc.mall.bean.OmsCartItem;
 import com.qc.mall.cart.mapper.OmsCartItemMapper;
+import com.qc.mall.consts.MqQueueConst;
 import com.qc.mall.consts.RedisConst;
 import com.qc.mall.service.CartService;
+import com.qc.mall.util.ActiveMQUtil;
 import com.qc.mall.util.RedisUtil;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -30,6 +33,8 @@ public class CartServiceImpl implements CartService {
     OmsCartItemMapper omsCartItemMapper;
     @Autowired
     RedisUtil redisUtil;
+    @Autowired
+    ActiveMQUtil activeMQUtil;
     @Override
     public OmsCartItem ifCartExistByUser(String memberId, String skuId) {
         OmsCartItem omsCartItem = omsCartItemMapper.selectOneByMemberIdAndSkuId(memberId,skuId);
@@ -97,5 +102,12 @@ public class CartServiceImpl implements CartService {
         omsCartItemMapper.updateByMemberIdAndSkuId(omsCartItem.getMemberId(),omsCartItem.getProductSkuId(),omsCartItem.getIsChecked());
         // 缓存同步
         flushCartCache(omsCartItem.getMemberId());
+    }
+
+    @Override
+    public void syncflushCartCache(String memberId) {
+        HashMap<String, String> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("memberId", memberId);
+        activeMQUtil.sendTransactedMapMessage(MqQueueConst.UPDATE_CARTCACHE,objectObjectHashMap );
     }
 }
