@@ -53,7 +53,7 @@ public class PaymentController {
     @RequestMapping("alipay/submit")
     @LoginRequired(loginSuccess = true)
     @ResponseBody
-    public String alipay(String outTradeNo, BigDecimal totalAmount, HttpServletRequest request, ModelMap modelMap){
+    public String alipay(String outTradeNo,String subject, BigDecimal totalAmount, HttpServletRequest request, ModelMap modelMap){
         // 获得一个支付宝请求的客户端(它并不是一个链接，而是一个封装好的http的表单请求)
         String form = null;
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();//创建API对应的request
@@ -63,8 +63,8 @@ public class PaymentController {
         Map<String,Object> map = new HashMap<>();
         map.put("out_trade_no",outTradeNo);
         map.put("product_code","FAST_INSTANT_TRADE_PAY");
-        map.put("total_amount","0.01");
-        map.put("subject","保时捷911");
+        map.put("total_amount",totalAmount);
+        map.put("subject",subject);
         String param = JSON.toJSONString(map);
         alipayRequest.setBizContent(param);
         try {
@@ -92,13 +92,13 @@ public class PaymentController {
 
     @RequestMapping("index")
     @LoginRequired(loginSuccess = true)
-    public String index(String outTradeNo, BigDecimal totalAmount, HttpServletRequest request, ModelMap modelMap){
+    public String index(String outTradeNo,String subject, BigDecimal totalAmount, HttpServletRequest request, ModelMap modelMap){
         String memberId = (String)request.getAttribute("memberId");
         String nickname = (String)request.getAttribute("nickname");
         modelMap.put("nickname",nickname);
         modelMap.put("outTradeNo",outTradeNo);
         modelMap.put("totalAmount",totalAmount);
-
+        modelMap.put("subject", subject);
         return "index";
     }
 
