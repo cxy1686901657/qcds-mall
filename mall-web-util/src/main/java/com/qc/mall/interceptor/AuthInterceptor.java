@@ -31,7 +31,12 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         log.info(request.getRequestURL()+"进入拦截器");
-        HandlerMethod hm = (HandlerMethod) handler;
+        HandlerMethod hm=null;
+       if(handler instanceof HandlerMethod){
+            hm = (HandlerMethod) handler;
+       }else{
+           return true;
+       }
         LoginRequired methodAnnotation = hm.getMethodAnnotation(LoginRequired.class);
         // 是否拦截
         if (methodAnnotation == null) {
