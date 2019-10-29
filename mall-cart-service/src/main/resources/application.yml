@@ -17,7 +17,7 @@ spring:
   activemq:
     broker-url: tcp://115.159.213.143:61616
     listener:
-      enabled: true
+      enable: true
 dubbo:
   application:
     name: cart-service

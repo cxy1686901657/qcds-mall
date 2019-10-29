@@ -65,7 +65,7 @@ public class CartServiceImpl implements CartService {
         Jedis jedis=redisUtil.getJedis();
         try{
             String s = jedis.get(RedisConst.CART.prefix + memberId + RedisConst.CART.sufix);
-            if(s.equals("")||StringUtils.isBlank(s)){
+            if(StringUtils.isBlank(s)||s.equals("")){
                 List<OmsCartItem> omsCartItems = omsCartItemMapper.selectAllByMemberId(memberId);
                 jedis.set(RedisConst.CART.prefix + memberId +
                         RedisConst.CART.sufix, JSON.toJSONString(omsCartItems));
