@@ -63,7 +63,7 @@ public class PaymentController {
         Map<String,Object> map = new HashMap<>();
         map.put("out_trade_no",outTradeNo);
         map.put("product_code","FAST_INSTANT_TRADE_PAY");
-        map.put("total_amount",totalAmount);
+        map.put("total_amount","0.01");
         map.put("subject",subject);
         String param = JSON.toJSONString(map);
         alipayRequest.setBizContent(param);

@@ -51,6 +51,7 @@ public class CartController {
                 omsCartItems = JSON.parseArray(cartListCookie,OmsCartItem.class);
             }
         }
+
         for (OmsCartItem omsCartItem : omsCartItems) {
             omsCartItem.setTotalPrice(new BigDecimal(omsCartItem.getPrice().intValue()*omsCartItem.getQuantity()));
         }
