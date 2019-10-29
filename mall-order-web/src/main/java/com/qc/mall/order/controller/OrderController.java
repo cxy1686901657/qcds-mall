@@ -136,7 +136,7 @@ public class OrderController {
             mv = new ModelAndView("redirect:http://localhost:8007/index");
             mv.addObject("outTradeNo",outTradeNo);
             mv.addObject("totalAmount",totalAmount);
-            mv.addObject("subject",omsCartItems.get(1).getProductName());
+            mv.addObject("subject",omsCartItems.get(0).getProductName());
             return mv;
         }else {
             mv = new ModelAndView("tradeFail");
