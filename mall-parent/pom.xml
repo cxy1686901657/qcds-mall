@@ -14,7 +14,7 @@
         <swagger-version>2.6.1</swagger-version>
         <commons-lang3.version>3.7</commons-lang3.version>
         <beanUtils.version>1.9.3</beanUtils.version>
-        <boot-version>2.1.7.RELEASE</boot-version>
+        <boot-version>2.5.12</boot-version>
         <dubbo-version>0.2.0</dubbo-version>
         <zk-version>0.10</zk-version>
         <mysql-version>5.1.37</mysql-version>
